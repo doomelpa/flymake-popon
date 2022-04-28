@@ -87,6 +87,21 @@ The value should be in seconds."
   '((t :inherit default))
   "Default face for popon/posframe.")
 
+(defface flymake-popon-note
+  '((t :inherit compilation-info))
+  "Face for showing diagnotic of level :note."
+  :group 'capital)
+
+(defface flymake-popon-warning
+  '((t :inherit compilation-warning))
+  "Face for showing diagnotic of level :warning."
+  :group 'capital)
+
+(defface flymake-popon-error
+  '((t :inherit compilation-error))
+  "Face for showing diagnotic of level :error."
+  :group 'capital)
+
 (defface flymake-popon-posframe-border
   '((t :foreground "black"))
   "Border face.  Only foreground is used, others are ignored.")
@@ -101,8 +116,14 @@ The value should be in seconds."
   "Format DIAGNOSTIC to text."
   (with-temp-buffer
     (insert
-     (concat "* " (car (split-string (flymake-diagnostic-text diagnostic)
-                                     "[\n\r]+"))))
+     "* "
+     (propertize
+      (car (split-string (flymake-diagnostic-text diagnostic) "[\n\r]+"))
+      'face (plist-get (list :note 'flymake-popon-note
+                             :warning 'flymake-popon-warning
+                             :error 'flymake-popon-error)
+                       (flymake-diagnostic-type diagnostic))))
+    (message "%S" (flymake-diagnostic-type diagnostic))
 
     ;; Break long lines.
     (goto-char (point-min))
