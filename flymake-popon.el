@@ -123,7 +123,6 @@ The value should be in seconds."
                              :warning 'flymake-popon-warning
                              :error 'flymake-popon-error)
                        (flymake-diagnostic-type diagnostic))))
-    (message "%S" (flymake-diagnostic-type diagnostic))
 
     ;; Break long lines.
     (goto-char (point-min))
