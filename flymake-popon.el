@@ -35,6 +35,7 @@
 (require 'popon)
 (require 'posframe)
 (require 'flymake)
+(require 'compile)
 
 (defgroup flymake-popon nil
   "Flymake diagnostics on cursor hover."
