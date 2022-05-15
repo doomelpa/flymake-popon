@@ -17,8 +17,9 @@ both graphical and non-graphical displays.
 
 #+begin_src emacs-lisp
 (straight-use-package
- '(popon :type git
-         :repo "https://codeberg.org/akib/emacs-flymake-popon.git"))
+ '(flymake-popon
+   :type git
+   :repo "https://codeberg.org/akib/emacs-flymake-popon.git"))
 #+end_src
 
 * Usage
