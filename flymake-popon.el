@@ -5,7 +5,7 @@
 ;; Author: Akib Azmain Turja <akib@disroot.org>
 ;; Created: 2022-04-28
 ;; Version: 0.1
-;; Package-Requires: ((emacs "27.1") flymake popon posframe)
+;; Package-Requires: ((emacs "26.1") (flymake "0") (popon "0") (posframe "0"))
 ;; Keywords: convenience
 ;; Homepage: https://codeberg.org/akib/emacs-flymake-popon
 
@@ -211,6 +211,7 @@ The value should be in seconds."
   (setq flymake-popon--timer
         (run-with-timer flymake-popon-delay nil #'flymake-popon--show)))
 
+;;;###autoload
 (define-minor-mode flymake-popon-mode
   "Toggle show Flymake diagnostics on cursor hover."
   nil " Flymake-Popon" nil
@@ -221,7 +222,9 @@ The value should be in seconds."
     (remove-hook 'pre-command-hook #'flymake-popon--hide t)
     (remove-hook 'post-command-hook #'flymake-popon--post-command t)))
 
+;;;###autoload
 (define-globalized-minor-mode global-flymake-popon-mode flymake-popon-mode
   flymake-popon-mode)
 
+(provide 'flymake-popon)
 ;;; flymake-popon.el ends here
