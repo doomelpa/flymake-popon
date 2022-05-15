@@ -214,7 +214,8 @@ The value should be in seconds."
 ;;;###autoload
 (define-minor-mode flymake-popon-mode
   "Toggle show Flymake diagnostics on cursor hover."
-  nil " Flymake-Popon" nil
+  :lighter " Flymake-Popon"
+  :keymap nil
   (if flymake-popon-mode
       (progn
         (add-hook 'pre-command-hook #'flymake-popon--hide nil t)
