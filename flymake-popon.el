@@ -183,7 +183,7 @@ The value should be in seconds."
                      (if (>= (cdr pos) (length lines))
                          (cons (car pos) (- (cdr pos) (length lines)))
                        (cons (car pos) (1+ (cdr pos)))))))
-              (let ((buffer (get-buffer-create "*flymake-popon*")))
+              (let ((buffer (get-buffer-create " *flymake-popon*")))
                 (apply #'posframe-show buffer :string message
                        `(,@(unless
                                (zerop flymake-popon-posframe-border-width)
