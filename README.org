@@ -34,5 +34,5 @@ Install from NonGNU ELPA.
 
 * Usage
 
-Enable with =M-x flymake-popon-mode=.  All customization options can be
-found by =M-x customize-group RET flymake-popon=.
+Enable with =M-x flymake-popon-mode=.  All customization options can
+be found by =M-x customize-group RET flymake-popon=.

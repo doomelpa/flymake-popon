@@ -26,8 +26,8 @@
 
 ;;; Commentary:
 
-;; This package shows Flymake diagnostics on cursor hover.  This works on
-;; both graphical and non-graphical displays.  Enable it with M-x
+;; This package shows Flymake diagnostics on cursor hover.  This works
+;; on both graphical and non-graphical displays.  Enable it with M-x
 ;; flymake-popon-mode.
 
 ;;; Code:
@@ -46,9 +46,9 @@
 (defcustom flymake-popon-method 'posframe
   "How to show popup.
 
-When value is `popon', a popon (popup) is used.  When value is `posframe',
-a posframe (child frame) is used.  On non-graphical display a popon will
-always be used."
+When value is `popon', a popon (popup) is used.  When value is
+`posframe', a posframe (child frame) is used.  On non-graphical
+display a popon will always be used."
   :type '(choice (const :tag "Use a popon (popup)" popon)
                  (const :tag "Use a posframe (child frame)" posframe)))
 
@@ -56,9 +56,10 @@ always be used."
   #'flymake-popon-format-diagnostic
   "Format diagnotics using this function.
 
-The function should take a single argument, which a `flymake-diagnostic'
-object and return a string describing it.  The string should not be wider
-than `flymake-popon-width'.  It may contain newlines."
+The function should take a single argument, which is a
+`flymake-diagnostic' object and return a string describing it.  The
+string should not be wider than `flymake-popon-width'.  It may contain
+newlines."
   :type 'function)
 
 (defcustom flymake-popon-posframe-extra-arguments
@@ -88,21 +89,6 @@ The value should be in seconds."
   '((t :inherit default))
   "Default face for popon/posframe.")
 
-(defface flymake-popon-note
-  '((t :inherit compilation-info))
-  "Face for showing diagnotic of level :note."
-  :group 'capital)
-
-(defface flymake-popon-warning
-  '((t :inherit compilation-warning))
-  "Face for showing diagnotic of level :warning."
-  :group 'capital)
-
-(defface flymake-popon-error
-  '((t :inherit compilation-error))
-  "Face for showing diagnotic of level :error."
-  :group 'capital)
-
 (defface flymake-popon-posframe-border
   '((t :foreground "black"))
   "Border face.  Only foreground is used, others are ignored.")
@@ -113,17 +99,23 @@ The value should be in seconds."
 (defvar flymake-popon--timer nil
   "Timer to show popon.")
 
+(defun flymake-popon--get-face-for-diagnostic (diagnostic)
+  "Get appropiate face for showing DIAGNOSTIC."
+  (and-let* ((category (get (flymake-diagnostic-type diagnostic)
+                            'flymake-category))
+             ((symbolp category))
+             ((or (get category 'flymake-popon-face)
+                  (get category 'mode-line-face))))))
+
 (defun flymake-popon-format-diagnostic (diagnostic)
   "Format DIAGNOSTIC to text."
   (with-temp-buffer
     (insert
      "* "
      (propertize
-      (car (split-string (flymake-diagnostic-text diagnostic) "[\n\r]+"))
-      'face (plist-get (list :note 'flymake-popon-note
-                             :warning 'flymake-popon-warning
-                             :error 'flymake-popon-error)
-                       (flymake-diagnostic-type diagnostic))))
+      (car (split-string (flymake-diagnostic-text diagnostic)
+                         "[\n\r]"))
+      'face (flymake-popon--get-face-for-diagnostic diagnostic)))
 
     ;; Break long lines.
     (goto-char (point-min))
@@ -156,11 +148,11 @@ The value should be in seconds."
                      (apply #'max (mapcar #'string-width lines))))
          (i 0))
     (mapcar (lambda (line)
-                 (with-temp-buffer
-                   (insert line)
-                   (move-to-column width t)
-                   (setq i (1+ i))
-                   (buffer-substring (point-min) (point))))
+              (with-temp-buffer
+                (insert line)
+                (move-to-column width t)
+                (setq i (1+ i))
+                (buffer-substring (point-min) (point))))
             lines)))
 
 (defun flymake-popon--show ()
@@ -175,8 +167,8 @@ The value should be in seconds."
                 (let* ((lines (flymake-popon--popon-format-message
                                message))
                        (str (string-join lines "\n")))
-                  (add-face-text-property 0 (length str) 'flymake-popon
-                                          t str)
+                  (add-face-text-property
+                   0 (length str) 'flymake-popon t str)
                   (popon-create
                    str
                    (let ((pos (popon-x-y-at-pos (point))))
@@ -186,15 +178,16 @@ The value should be in seconds."
               (let ((buffer (get-buffer-create " *flymake-popon*")))
                 (with-current-buffer buffer
                   (face-remap-add-relative 'default 'flymake-popon))
-                (apply #'posframe-show buffer :string message
-                       `(,@(unless
-                               (zerop flymake-popon-posframe-border-width)
-                             `(:border-width
-                               ,flymake-popon-posframe-border-width
-                               :border-color
-                               ,(face-foreground
-                                 'flymake-popon-posframe-border nil t)))
-                         ,@flymake-popon-posframe-extra-arguments))
+                (apply
+                 #'posframe-show buffer :string message
+                 `(,@(unless
+                         (zerop flymake-popon-posframe-border-width)
+                       `(:border-width
+                         ,flymake-popon-posframe-border-width
+                         :border-color
+                         ,(face-foreground
+                           'flymake-popon-posframe-border nil t)))
+                   ,@flymake-popon-posframe-extra-arguments))
                 buffer))))))
 
 (defun flymake-popon--hide ()
@@ -211,7 +204,8 @@ The value should be in seconds."
   (when flymake-popon--timer
     (cancel-timer flymake-popon--timer))
   (setq flymake-popon--timer
-        (run-with-timer flymake-popon-delay nil #'flymake-popon--show)))
+        (run-with-timer flymake-popon-delay nil
+                        #'flymake-popon--show)))
 
 ;;;###autoload
 (define-minor-mode flymake-popon-mode
@@ -221,13 +215,14 @@ The value should be in seconds."
   (if flymake-popon-mode
       (progn
         (add-hook 'pre-command-hook #'flymake-popon--hide nil t)
-        (add-hook 'post-command-hook #'flymake-popon--post-command nil t))
+        (add-hook 'post-command-hook #'flymake-popon--post-command
+                  nil t))
     (remove-hook 'pre-command-hook #'flymake-popon--hide t)
     (remove-hook 'post-command-hook #'flymake-popon--post-command t)))
 
 ;;;###autoload
-(define-globalized-minor-mode global-flymake-popon-mode flymake-popon-mode
-  flymake-popon-mode)
+(define-globalized-minor-mode global-flymake-popon-mode
+  flymake-popon-mode flymake-popon-mode)
 
 (provide 'flymake-popon)
 ;;; flymake-popon.el ends here
