@@ -200,6 +200,11 @@ The value should be in seconds."
         (run-with-timer flymake-popon-delay nil
                         #'flymake-popon--show)))
 
+(defun flymake-popon--update-if-shown (&rest _)
+  "Update popon if it is shown."
+  (when (and flymake-popon-mode flymake-popon--popup)
+    (flymake-popon--show)))
+
 ;;;###autoload
 (define-minor-mode flymake-popon-mode
   "Toggle show Flymake diagnostics on cursor hover."
@@ -209,7 +214,9 @@ The value should be in seconds."
       (progn
         (add-hook 'pre-command-hook #'flymake-popon--hide nil t)
         (add-hook 'post-command-hook #'flymake-popon--post-command
-                  nil t))
+                  nil t)
+        (advice-add #'flymake--handle-report :after
+                    #'flymake-popon--update-if-shown))
     (remove-hook 'pre-command-hook #'flymake-popon--hide t)
     (remove-hook 'post-command-hook #'flymake-popon--post-command t)))
 
