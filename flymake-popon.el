@@ -99,14 +99,6 @@ The value should be in seconds."
 (defvar flymake-popon--timer nil
   "Timer to show popon.")
 
-(defun flymake-popon--get-face-for-diagnostic (diagnostic)
-  "Get appropiate face for showing DIAGNOSTIC."
-  (and-let* ((category (get (flymake-diagnostic-type diagnostic)
-                            'flymake-category))
-             ((symbolp category))
-             ((or (get category 'flymake-popon-face)
-                  (get category 'mode-line-face))))))
-
 (defun flymake-popon-format-diagnostic (diagnostic)
   "Format DIAGNOSTIC to text."
   (with-temp-buffer
@@ -115,7 +107,8 @@ The value should be in seconds."
      (propertize
       (car (split-string (flymake-diagnostic-text diagnostic)
                          "[\n\r]"))
-      'face (flymake-popon--get-face-for-diagnostic diagnostic)))
+      'face (flymake--lookup-type-property
+             (flymake-diagnostic-type diagnostic) 'mode-line-face)))
 
     ;; Break long lines.
     (goto-char (point-min))
