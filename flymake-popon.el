@@ -4,7 +4,7 @@
 
 ;; Author: Akib Azmain Turja <akib@disroot.org>
 ;; Created: 2022-04-28
-;; Version: 0.5
+;; Version: 0.5.1
 ;; Package-Requires: ((emacs "26.1") (flymake "1.2.2") (popon "0.1") (posframe "1.3.2"))
 ;; Keywords: convenience
 ;; Homepage: https://codeberg.org/akib/emacs-flymake-popon
